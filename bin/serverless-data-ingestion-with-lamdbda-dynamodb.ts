@@ -1,21 +1,43 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
+
 import * as cdk from 'aws-cdk-lib';
+import * as dotenv from 'dotenv';
+import { ServerlessDataIngestionWithLamdbdaDynamodbStackProps } from '../lib/ServerlessDataIngestionWithLamdbdaDynamodbStackProps';
 import { ServerlessDataIngestionWithLamdbdaDynamodbStack } from '../lib/serverless-data-ingestion-with-lamdbda-dynamodb-stack';
+import { checkEnvVariables } from '../utils/check-environment-variable';
 
+dotenv.config(); // Load environment variables from .env file
 const app = new cdk.App();
-new ServerlessDataIngestionWithLamdbdaDynamodbStack(app, 'ServerlessDataIngestionWithLamdbdaDynamodbStack', {
-  /* If you don't specify 'env', this stack will be environment-agnostic.
-   * Account/Region-dependent features and context lookups will not work,
-   * but a single synthesized template can be deployed anywhere. */
 
-  /* Uncomment the next line to specialize this stack for the AWS Account
-   * and Region that are implied by the current CLI configuration. */
-  // env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+const { CDK_DEFAULT_ACCOUNT: account, CDK_DEFAULT_REGION: region } = process.env;
 
-  /* Uncomment the next line if you know exactly what Account and Region you
-   * want to deploy the stack to. */
-  // env: { account: '123456789012', region: 'us-east-1' },
+const cdkRegions = process.env.CDK_DEPLOY_REGIONS?.split(',') ?? [region]; // Parsing comma separated list of regions
+const deployEnvironments = process.env.ENVIRONMENTS?.split(',') ?? ['development']; // Parsing comma separated list of environments
 
-  /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
-});
+// check APP_NAME variable
+checkEnvVariables('APP_NAME', 'DATA_INGESTION_API_KEY');
+const appName = process.env.APP_NAME!;
+
+for (const deployEnvironment of deployEnvironments) {
+    for (const cdkRegion of cdkRegions) {
+        const stackProps: ServerlessDataIngestionWithLamdbdaDynamodbStackProps = {
+            resourcePrefix: `${appName}-${deployEnvironment}`,
+            env: {
+                region: cdkRegion,
+                account,
+            },
+            deployRegion: cdkRegion,
+            deployEnvironment,
+            appName,
+            DATA_INGESTION_API_KEY: process.env.DATA_INGESTION_API_KEY!,
+        };
+        new ServerlessDataIngestionWithLamdbdaDynamodbStack(app, `ServerlessDataIngestionWithLamdbdaDynamodbStack`, {
+            ...stackProps,
+            stackName: `${appName}-${deployEnvironment}-ServerlessDataIngestionWithLamdbdaDynamodbStack`,
+            description: `ServerlessDataIngestionWithLamdbdaDynamodbStack for ${appName} in ${cdkRegion} ${deployEnvironment}.`,
+        });
+    }
+}
+
+app.synth();

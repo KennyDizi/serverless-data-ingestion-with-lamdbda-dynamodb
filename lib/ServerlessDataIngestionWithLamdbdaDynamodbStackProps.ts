@@ -17,4 +17,8 @@ export interface ServerlessDataIngestionWithLamdbdaDynamodbStackProps extends St
      * The name of the application. Used for resource naming and identification.
      */
     readonly appName: string;
+     /**
+     * The api key for the data ingestion API.
+     */
+     readonly DATA_INGESTION_API_KEY: string;
 }
