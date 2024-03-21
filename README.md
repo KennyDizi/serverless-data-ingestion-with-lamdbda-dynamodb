@@ -6,6 +6,10 @@ A repository containing a serverless application for data ingestion using AWS La
 
 This project demonstrates a serverless data ingestion pipeline that utilizes AWS Lambda for processing, DynamoDB for data storage, and SQS for message queuing. The application is designed to ingest data through an API, process it, and store it in a DynamoDB table.
 
+### System Architect
+
+![System Architecture](assets/system.png)
+
 ## Features
 
 - **API Gateway**: Exposes an HTTP endpoint for data ingestion.
