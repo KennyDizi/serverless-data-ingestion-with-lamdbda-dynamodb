@@ -12,7 +12,7 @@ This project demonstrates a serverless data ingestion pipeline that utilizes AWS
 
 ## Features
 
-- **API Gateway**: Exposes an HTTP endpoint for data ingestion.
+- **Lambda Function URL**: Exposes an HTTP endpoint for data ingestion.
 - **Lambda Functions**: Processes the incoming data and stores it in DynamoDB.
 - **DynamoDB**: Serves as the database for storing ingested data.
 - **SQS**: Queues messages for processing, ensuring scalability and resilience.
