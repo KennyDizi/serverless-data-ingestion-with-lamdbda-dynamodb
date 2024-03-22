@@ -10,6 +10,10 @@ This project demonstrates a serverless data ingestion pipeline that utilizes AWS
 
 ![System Architecture](assets/system.png)
 
+### Benchmark
+
+![Benchmark between Llrt and NodeJS](assets/benchmark.png)
+
 ## Features
 
 - **Lambda Function URL**: Exposes an HTTP endpoint for data ingestion.
